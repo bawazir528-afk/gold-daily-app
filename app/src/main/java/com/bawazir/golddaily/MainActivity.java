@@ -194,22 +194,29 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private WebView printWebView;
+
     private void printHtmlInternal(String html) {
         try {
-            WebView printer = new WebView(this);
-            printer.getSettings().setJavaScriptEnabled(false);
-            printer.loadDataWithBaseURL(url, html, "text/html", "UTF-8", null);
-            printer.setWebViewClient(new WebViewClient() {
+            // نحتفظ بمرجع حتى لا يُحرَّر الـ WebView قبل انتهاء الطباعة
+            printWebView = new WebView(this);
+            printWebView.getSettings().setJavaScriptEnabled(false);
+            printWebView.loadDataWithBaseURL(url, html, "text/html", "UTF-8", null);
+            printWebView.setWebViewClient(new WebViewClient() {
                 @Override
                 public void onPageFinished(WebView v, String u) {
-                    PrintManager pm = (PrintManager) getSystemService(Context.PRINT_SERVICE);
-                    String job = PRINT_JOB + " — " + getString(R.string.app_name);
-                    PrintDocumentAdapter adapter = v.createPrintDocumentAdapter(job);
-                    pm.print(job, adapter, new PrintAttributes.Builder()
-                            .setMediaSize(PrintAttributes.MediaSize.ISO_A4)
-                            .setResolution(new PrintAttributes.Resolution("pdf", "pdf", 600, 600))
-                            .setMinMargins(PrintAttributes.Margins.NO_MARGINS)
-                            .build());
+                    try {
+                        PrintManager pm = (PrintManager) getSystemService(Context.PRINT_SERVICE);
+                        String job = PRINT_JOB + " — " + getString(R.string.app_name);
+                        PrintDocumentAdapter adapter = v.createPrintDocumentAdapter(job);
+                        pm.print(job, adapter, new PrintAttributes.Builder()
+                                .setMediaSize(PrintAttributes.MediaSize.ISO_A4)
+                                .setResolution(new PrintAttributes.Resolution("pdf", "pdf", 600, 600))
+                                .setMinMargins(PrintAttributes.Margins.NO_MARGINS)
+                                .build());
+                    } catch (Exception e) {
+                        Toast.makeText(MainActivity.this, R.string.print_failed, Toast.LENGTH_LONG).show();
+                    }
                 }
             });
         } catch (Exception e) {
