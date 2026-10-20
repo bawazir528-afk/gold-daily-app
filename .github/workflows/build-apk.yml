@@ -44,22 +44,37 @@ jobs:
         with:
           gradle-version: '8.9'
 
-      - name: Decode signing keystore
-        if: ${{ (inputs.build_type || 'release') == 'release' && secrets.KEYSTORE_BASE64 != '' }}
+      - name: Check signing secret
+        # secrets غير متاحة داخل if: — لذا نحسب علم التوقيع في خطوة مستقلة
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
         run: |
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "HAS_SIGNING=true" >> "$GITHUB_ENV"
+          else
+            echo "HAS_SIGNING=false" >> "$GITHUB_ENV"
+          fi
+
+      - name: Decode signing keystore
+        if: ${{ env.HAS_SIGNING == 'true' }}
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
           echo "$KEYSTORE_BASE64" | base64 -d > release.keystore
           echo "SIGNING_STORE_FILE=$GITHUB_WORKSPACE/release.keystore" >> "$GITHUB_ENV"
-          echo "SIGNING_STORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}" >> "$GITHUB_ENV"
-          echo "SIGNING_KEY_ALIAS=${{ secrets.KEY_ALIAS }}" >> "$GITHUB_ENV"
-          echo "SIGNING_KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}" >> "$GITHUB_ENV"
+          echo "SIGNING_STORE_PASSWORD=$KEYSTORE_PASSWORD" >> "$GITHUB_ENV"
+          echo "SIGNING_KEY_ALIAS=$KEY_ALIAS" >> "$GITHUB_ENV"
+          echo "SIGNING_KEY_PASSWORD=$KEY_PASSWORD" >> "$GITHUB_ENV"
+          echo "تم تحضير مفتاح التوقيع الخاص"
 
       - name: Build
+        env:
+          BUILD_TYPE: ${{ inputs.build_type || 'release' }}
         run: |
-          TYPE="${{ inputs.build_type }}"
-          if [ -z "$TYPE" ]; then TYPE="release"; fi
-          if [ "$TYPE" = "release" ]; then
+          if [ "$BUILD_TYPE" = "release" ]; then
             gradle assembleRelease --no-daemon --stacktrace
           else
             gradle assembleDebug --no-daemon --stacktrace
