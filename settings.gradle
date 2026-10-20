@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "الحركة اليومية"
+rootProject.name = "GoldDaily"
 include ':app'

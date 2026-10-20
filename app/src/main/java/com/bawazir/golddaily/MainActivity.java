@@ -105,7 +105,18 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onReceivedError(WebView v, WebResourceRequest req, WebResourceError err) {
+                // API 23+ — يغطي كل الأخطاء بما فيها أخطاء الإطارات الفرعية
                 if (req != null && req.isForMainFrame()) {
+                    showError();
+                }
+            }
+
+            @SuppressWarnings("deprecation")
+            @Override
+            public void onReceivedError(WebView v, int errorCode, String description, String failingUrl) {
+                // API 21-22 (أندرويد 5) — لا يوجد WebResourceRequest/WebResourceError
+                // نتحقق أنها ليست NO_ERROR (‎-1) قبل إظهار شاشة الخطأ
+                if (errorCode != -1) {
                     showError();
                 }
             }

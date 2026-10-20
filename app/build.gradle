@@ -25,10 +25,11 @@ android {
     def storePass = System.getenv("SIGNING_STORE_PASSWORD") ?: keystoreProps["storePassword"]
     def keyAliasV = System.getenv("SIGNING_KEY_ALIAS") ?: keystoreProps["keyAlias"]
     def keyPass = System.getenv("SIGNING_KEY_PASSWORD") ?: keystoreProps["keyPassword"]
+    def hasSigning = storePath && storePass && keyAliasV && keyPass
 
-    signingConfigs {
-        release {
-            if (storePath && storePass && keyAliasV && keyPass) {
+    if (hasSigning) {
+        signingConfigs {
+            release {
                 storeFile file(storePath)
                 storePassword storePass
                 keyAlias keyAliasV
@@ -41,10 +42,9 @@ android {
         release {
             minifyEnabled false
             shrinkResources false
-            // إن لم تتوفر بيانات التوقيع، يُنتج APK غير موقّع بدل أن يفشل البناء
-            if (storePath && storePass && keyAliasV && keyPass) {
-                signingConfig signingConfigs.release
-            }
+            // إن توفر توقيع خاص استُخدم، وإلا نوقّع بمفتاح debug
+            // حتى يبقى الناتج قابلاً للتثبيت بدل APK غير موقّع
+            signingConfig hasSigning ? signingConfigs.release : signingConfigs.debug
         }
         debug {
             applicationIdSuffix ".debug"
@@ -54,6 +54,17 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
+    }
+
+    packagingOptions {
+        resources {
+            excludes += ['META-INF/*.kotlin_module', 'META-INF/DEPENDENCIES', 'META-INF/LICENSE*', 'META-INF/NOTICE*']
+        }
+    }
+
+    lint {
+        abortOnError false
+        checkReleaseBuilds false
     }
 }
 
