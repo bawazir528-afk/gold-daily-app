@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">الحركة اليومية</string>
+    <string name="setup_title">ربط النموذج</string>
+
+    <string name="setup_heading">الحركة اليومية لمبيعات الذهب</string>
+    <string name="setup_hint">الصق رابط تطبيق الويب (Web App) الذي ينتهي بـ /exec، ثم اضغط حفظ.</string>
+    <string name="setup_label">رابط النموذج (/exec)</string>
+    <string name="setup_placeholder">https://script.google.com/macros/s/…/exec</string>
+    <string name="save">حفظ ومتابعة</string>
+    <string name="change_url">تغيير الرابط</string>
+    <string name="error_empty">أدخل الرابط أولاً.</string>
+    <string name="error_url">الرابط غير صحيح. يجب أن يبدأ بـ https://script.google.com/ وينتهي بـ /exec</string>
+    <string name="error_load">تعذّر تحميل النموذج. تحقّق من الاتصال بالإنترنت ومن أن النشر بصلاحية «أي شخص».</string>
+    <string name="retry">إعادة المحاولة</string>
+    <string name="loading">جارٍ التحميل…</string>
+    <string name="print">🖨️ طباعة</string>
+    <string name="close">إغلاق</string>
+    <string name="share">مشاركة</string>
+    <string name="print_failed">تعذّرت الطباعة على هذا الجهاز.</string>
+    <string name="no_print_app">لا يوجد تطبيق طباعة/PDF على هذا الجهاز. يمكنك مشاركة الملف وحفظه.</string>
+    <string name="exit_title">تم إنهاء الجلسة</string>
+    <string name="exit_body">تم إنهاء التطبيق ومسح البيانات المُدخلة.</string>
+</resources>

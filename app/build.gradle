@@ -1,0 +1,64 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.bawazir.golddaily'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId "com.bawazir.golddaily"
+        minSdk 21
+        targetSdk 35
+        versionCode 1
+        versionName "1.0"
+        resConfigs "ar", "en"
+    }
+
+    // التوقيع: يُقرأ من متغيرات البيئة في البناء السحابي، أو من keystore.properties محلياً
+    def keystorePropsFile = rootProject.file("keystore.properties")
+    def keystoreProps = new Properties()
+    if (keystorePropsFile.exists()) {
+        keystorePropsFile.withInputStream { keystoreProps.load(it) }
+    }
+    def storePath = System.getenv("SIGNING_STORE_FILE") ?: keystoreProps["storeFile"]
+    def storePass = System.getenv("SIGNING_STORE_PASSWORD") ?: keystoreProps["storePassword"]
+    def keyAliasV = System.getenv("SIGNING_KEY_ALIAS") ?: keystoreProps["keyAlias"]
+    def keyPass = System.getenv("SIGNING_KEY_PASSWORD") ?: keystoreProps["keyPassword"]
+
+    signingConfigs {
+        release {
+            if (storePath && storePass && keyAliasV && keyPass) {
+                storeFile file(storePath)
+                storePassword storePass
+                keyAlias keyAliasV
+                keyPassword keyPass
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            shrinkResources false
+            // إن لم تتوفر بيانات التوقيع، يُنتج APK غير موقّع بدل أن يفشل البناء
+            if (storePath && storePass && keyAliasV && keyPass) {
+                signingConfig signingConfigs.release
+            }
+        }
+        debug {
+            applicationIdSuffix ".debug"
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'androidx.webkit:webkit:1.12.1'
+    implementation 'com.google.android.material:material:1.12.0'
+}

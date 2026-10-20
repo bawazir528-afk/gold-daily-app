@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.GoldDaily" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">#1F2A6B</item>
+        <item name="colorPrimaryVariant">#151D4A</item>
+        <item name="colorOnPrimary">#FADE8C</item>
+        <item name="colorSecondary">#C9A227</item>
+        <item name="colorOnSecondary">#1F2A6B</item>
+        <item name="android:statusBarColor">#1F2A6B</item>
+        <item name="android:navigationBarColor">#1F2A6B</item>
+        <item name="android:windowBackground">#1F2A6B</item>
+    </style>
+
+    <style name="GoldButton" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">#FADE8C</item>
+        <item name="android:textColor">#1F2A6B</item>
+        <item name="cornerRadius">12dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+    </style>
+
+    <style name="GoldButton.Ghost" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:textColor">#FADE8C</item>
+        <item name="strokeColor">#FADE8C</item>
+        <item name="cornerRadius">12dp</item>
+    </style>
+</resources>
